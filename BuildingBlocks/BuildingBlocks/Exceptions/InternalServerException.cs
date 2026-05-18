@@ -1,0 +1,17 @@
+﻿using BuildingBlocks.Exceptions.Base;
+
+namespace BuildingBlocks.Exceptions;
+
+public class InternalServerException : BaseException
+{
+
+    public InternalServerException(string message)
+        : base(message)
+    {
+    }
+
+    public InternalServerException(string message, string details) : base(message, details)
+    {
+    }
+
+}
