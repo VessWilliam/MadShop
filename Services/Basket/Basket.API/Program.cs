@@ -1,3 +1,6 @@
+using Basket.API.Data.Service;
+using BuildingBlocks.Exceptions.Handler;
+
 var builder = WebApplication.CreateBuilder(args);
 
 //Add service to the container  
@@ -17,8 +20,14 @@ builder.Services.AddMarten(opts =>
     opts.Schema.For<ShopCart>().Identity(x => x.UserName);
 }).UseLightweightSessions();
 
+
+builder.Services.AddScoped<IBasketRespository, BasketRespository>();
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
 var app = builder.Build();
 
 app.MapCarter();
+
+app.UseExceptionHandler(opts => { });
 
 app.Run();
