@@ -1,5 +1,5 @@
 services:
-  catalogdb:
+  catalog.db:
     container_name: catalogdb
     environment:
      - POSTGRES_USER=postgres
@@ -15,6 +15,30 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    
+  basket.db:
+    container_name: basketdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root123
+      - POSTGRES_DB=basketdb
+    restart: always
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_basket:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d basketdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cache.db:
+    container_name: cachedb
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
 
   catalog.api:
     container_name: catalogapi
@@ -36,22 +60,5 @@ services:
     volumes:
       - ${USERPROFILE}/.aspnet/https:/root/.aspnet/https:ro  
     depends_on:
-      catalogdb:
+      catalog.db:
         condition: service_healthy
-    
-  basketdb:
-    container_name: basketdb
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root123
-      - POSTGRES_DB=basketdb
-    restart: always
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_basket:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d basketdb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5

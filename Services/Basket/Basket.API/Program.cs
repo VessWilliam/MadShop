@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 //Add service to the container  
 var assembly = typeof(Program).Assembly;
 builder.Services.AddCarter();
+
+
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(assembly);
@@ -22,7 +24,16 @@ builder.Services.AddMarten(opts =>
 
 
 builder.Services.AddScoped<IBasketRespository, BasketRespository>();
+builder.Services.Decorate<IBasketRespository, CachedBasketRespository>();
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+builder.Services.AddStackExchangeRedisCache(opt =>
+{
+    opt.Configuration = builder.Configuration.GetConnectionString("Redis")!;
+    //opt.InstanceName = "BasketAPI";
+});
+
+
 
 var app = builder.Build();
 
