@@ -59,6 +59,32 @@ services:
 
     volumes:
       - ${USERPROFILE}/.aspnet/https:/root/.aspnet/https:ro  
+
     depends_on:
       catalog.db:
         condition: service_healthy
+
+  basket.api:
+    container_name: basketapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+        
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=root123
+
+      - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=basketdb;Username=postgres;Password=root123
+      - ConnectionStrings__Redis=cachedb:6379
+    ports:
+      - "6001:8080"
+      - "6061:8081"
+    volumes:
+     - ${USERPROFILE}/.aspnet/https:/root/.aspnet/https:ro
+    depends_on:
+      basket.db:
+        condition: service_healthy
+      cache.db:
+       condition: service_started
+      
