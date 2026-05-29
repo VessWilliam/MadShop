@@ -18,9 +18,7 @@ public class StoreBasketCommandHandler(IBasketRespository respository) : IComman
 {
     public async Task<StoreBasketResult> Handle(StoreBasketCommand command, CancellationToken cancellationToken)
     {
-        ShopCart cart = command.Cart;
-
-        await respository.StoreBasket(cart, cancellationToken);
+        await respository.StoreBasket(command.Cart, cancellationToken);
 
         return new(command.Cart.UserName);
     }
