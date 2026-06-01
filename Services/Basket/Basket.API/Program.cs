@@ -1,5 +1,6 @@
 using Basket.API.Data.Service;
 using BuildingBlocks.Exceptions.Handler;
+using Discount.Grpc;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
@@ -27,6 +28,15 @@ builder.Services.AddMarten(opts =>
 
 builder.Services.AddScoped<IBasketRespository, BasketRespository>();
 builder.Services.Decorate<IBasketRespository, CachedBasketRespository>();
+
+//Grpc Services
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(opt =>
+{
+    opt.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
+
+
+//Cross Cutting Services
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services.AddHealthChecks()
